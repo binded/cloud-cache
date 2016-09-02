@@ -1,0 +1,66 @@
+{
+  "name": "cloud-cache",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./lib/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npm run test:fast",
+    "build": "npm run clean && babel ./src --out-dir ./lib --copy-files",
+    "clean": "rimraf ./lib",
+    "lint": "eslint src/ test/",
+    "pretest": "npm run lint",
+    "test:fast": "babel-tape-runner test/*.test.js",
+    "test:watch": "nodemon --exec npm -- run --silent test:fast || true",
+    "semantic-release": "git push && npm test && semantic-release pre && npm run build && npm publish && semantic-release post"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blockai/cloud-cache.git"
+  },
+  "keywords": [],
+  "author": "Oli Lalonde <olalonde@gmail.com> (https://syskall.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blockai/cloud-cache/issues"
+  },
+  "homepage": "https://github.com/blockai/cloud-cache#readme",
+  "engines": {
+    "node": ">=6"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-plugin-syntax-object-rest-spread": "^6.13.0",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
+    "babel-preset-es2015-node6": "^0.3.0",
+    "babel-tape-runner": "^2.0.1",
+    "blue-tape": "^0.2.0",
+    "cz-conventional-changelog": "^1.2.0",
+    "eslint-config-blockai": "^1.0.1",
+    "fs-blob-store": "^5.2.1",
+    "nodemon": "^1.10.2",
+    "randomstring": "^1.1.5",
+    "request": "^2.74.0",
+    "rimraf": "^2.5.4",
+    "semantic-release": "^4.3.5"
+  },
+  "release": {
+    "debug": false,
+    "verifyConditions": {
+      "path": "./node_modules/semantic-release/dist/lib/plugin-noop.js"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "concat-stream": "^1.5.2",
+    "debug": "^2.2.0",
+    "duplexify": "^3.4.5",
+    "is-stream": "^1.1.0"
+  }
+}
