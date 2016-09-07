@@ -4,7 +4,7 @@
 
 Node.js caching library with pluggable backing store via
 [abstract-blob-store](https://github.com/maxogden/abstract-blob-store).
-[Streaming support](#streaming-api) makes it particularly useful for
+[Streaming support](#stream-api) makes it particularly useful for
 caching larger values like resized/cropped images or transcoded videos.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -16,8 +16,8 @@ caching larger values like resized/cropped images or transcoded videos.
 - [Usage](#usage)
   - [Setting up the client](#setting-up-the-client)
   - [Promise API](#promise-api)
-  - [Streaming API](#streaming-api)
-    - [Stream Error Handling](#stream-error-handling)
+  - [Stream API](#stream-api)
+    - [Error Handling](#error-handling)
   - [Errors](#errors)
 - [How it works](#how-it-works)
 - [TODO](#todo)
@@ -117,7 +117,7 @@ cache.getOrSet('google.com', () => (
 ))
 ```
 
-### Streaming API
+### Stream API
 
 **cache.getStream(key)**
 
@@ -165,7 +165,7 @@ event handler.
 cache.getOrSetStream('olalonde/avatar.png', () => resizeImage('/tmp/avatar.png')).pipe(req)
 ```
 
-#### Stream Error Handling
+#### Error Handling
 
 The streams returned by cache may emit `error` events. We recommend
 using [pipe() from the mississippi module](https://github.com/maxogden/mississippi#pipe)
