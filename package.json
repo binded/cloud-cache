@@ -60,7 +60,6 @@
   "dependencies": {
     "concat-stream": "^1.5.2",
     "debug": "^2.2.0",
-    "duplexify": "^3.4.5",
-    "is-stream": "^1.1.0"
+    "duplexify": "^3.4.5"
   }
 }

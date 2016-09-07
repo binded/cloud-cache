@@ -53,9 +53,15 @@ export const writeMetadata = (metadata, writeStream) => new Promise((resolve, re
   resolve()
 })
 
-export const readValue = (readStream, type) => new Promise((resolve) => {
+export const readValue = (readStream, type) => new Promise((resolve, reject) => {
   readStream.pipe(concat((buf) => {
-    resolve(getTypeByName(type).decode(buf))
+    let result
+    try {
+      result = getTypeByName(type).decode(buf)
+    } catch (err) {
+      return reject(err)
+    }
+    resolve(result)
   }))
 })
 

@@ -1,12 +1,14 @@
-import { PassThrough } from 'stream'
 import initDebug from 'debug'
 import duplexify from 'duplexify'
+import { PassThrough } from 'stream'
 
 import { getType } from './types'
 import { readMetadata, writeMetadata, readValue, writeValue } from './metadata'
 import * as errors from './errors'
 
 const { KeyNotExistsError, CloudCacheError } = errors
+
+const emptyBuf = Buffer.from([])
 
 export { KeyNotExistsError, CloudCacheError }
 
@@ -71,7 +73,7 @@ export default (store, {
     ttl = Infinity,
     stream = false,
   } = {}) => new Promise((resolve, reject) => {
-    const type = getType(value)
+    const type = getType(stream ? emptyBuf : value)
     const metadata = {
       type: type.name,
       ttl: ttl * 1000, // convert to milliseconds
@@ -103,15 +105,15 @@ export default (store, {
 
   // Streaming API
   const getStream = (key) => {
-    const through = new PassThrough()
+    const proxy = duplexify()
     get(key, { stream: true })
       .then((rs) => {
-        rs.pipe(through)
+        proxy.setReadable(rs)
       })
       .catch((err) => {
-        through.emit('error', err)
+        proxy.destroy(err)
       })
-    return through
+    return proxy
   }
 
   const setStream = (key, opts = {}) => {
@@ -123,18 +125,30 @@ export default (store, {
       .catch((err) => {
         proxy.destroy(err)
       })
-
     return proxy
   }
 
-  const getOrSetStream = (key, getStreamFn, opts) => {
+  const getOrSetStream = (key, getStreamFn, opts = {}) => {
     const proxy = duplexify()
-    getOrSet(key, getStreamFn, { ...opts, stream: true })
+    const onError = (err) => {
+      proxy.destroy(err)
+    }
+    get(key, { stream: true })
       .then((rs) => {
         proxy.setReadable(rs)
       })
       .catch((err) => {
-        proxy.destroy(err)
+        if (err instanceof KeyNotExistsError) {
+          Promise.resolve().then(() => getStreamFn()).then((rs) => {
+            const ws = setStream(key, opts)
+            const through = new PassThrough()
+            proxy.setReadable(through)
+            rs.pipe(through)
+            rs.pipe(ws)
+          })
+          return
+        }
+        onError(err)
       })
     return proxy
   }

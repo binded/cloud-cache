@@ -26,3 +26,56 @@ test('cache.gets', (t) => {
       t.end()
     }))
 })
+
+test('cache.getOrSets', (t) => {
+  let callCount = 0
+  const getPoemStream = () => {
+    callCount++
+    return poem()
+  }
+
+  const check = (str) => {
+    t.equal(str.toString(), poemStr.toString())
+    t.equal(callCount, 1)
+  }
+
+  cache
+    .getOrSets('poem-get-or-sets', getPoemStream)
+    .pipe(concat((str) => {
+      check(str)
+      cache
+        .getOrSets('poem-get-or-sets', getPoemStream)
+        .pipe(concat((str2) => {
+          check(str2)
+          t.end()
+        }))
+    }))
+})
+
+test('cache.getOrSets, pipe later', (t) => {
+  let callCount = 0
+  const getPoemStream = () => {
+    callCount++
+    return poem()
+  }
+
+  const check = (str) => {
+    t.equal(str.toString(), poemStr.toString())
+    t.equal(callCount, 1)
+  }
+
+  const rs = cache.getOrSets('poem-get-or-sets-pipe-later', getPoemStream)
+
+  setTimeout(() => {
+    rs.pipe(concat((buf) => {
+      check(buf)
+      cache
+        .get('poem-get-or-sets-pipe-later')
+        .then((buf2) => {
+          check(buf2)
+          t.end()
+        })
+        .catch(t.fail)
+    }))
+  }, 300)
+})
