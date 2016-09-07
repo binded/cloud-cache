@@ -4,30 +4,46 @@
 
 Node.js caching library with pluggable backing store via
 [abstract-blob-store](https://github.com/maxogden/abstract-blob-store).
+[Streaming support](#streaming-api) makes it particularly useful for
+caching larger values like resized/cropped images or transcoded videos.
 
-[Streaming support](#streaming-api) makes it particularly useful for caching larger values
-like resized/cropped images or transcoded videos.
+## Features
 
-Supported backing stores:
-
-  - AWS S3
-  - Google Cloud Storage
-  - Azure Storage
-  - LevelDB
-  - PostgreSQL
-  - Local file system
-  - IPFS
-  - etc.
-
-Supports Node.js buffers or any JavaScript value that can be serialised through
-`JSON.stringify`:
-
+- [Promise](#promise-api) and [Stream](#stream-api) based APIs
+- Supported backing stores:
+  - [AWS S3](https://github.com/jb55/s3-blob-store)
+  - [Google Cloud Storage](https://github.com/maxogden/google-cloud-storage)
+  - [Azure Storage](https://github.com/svnlto/azure-blob-store)
+  - [LevelDB](https://github.com/diasdavid/level-blob-store)
+  - [PostgreSQL](https://github.com/finnp/postgres-blob-store)
+  - [Local file system](https://github.com/mafintosh/fs-blob-store)
+  - [IPFS](https://github.com/ipfs/ipfs-blob-store)
+  - [etc.](https://github.com/maxogden/abstract-blob-store)
+- Supported data types:
   - Buffer
-  - Number
-  - String
-  - Boolean
-  - Array
-  - Object
+  - JSON types
+    - Number
+    - String
+    - Boolean
+    - Array
+    - Object
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Install](#install)
+- [Usage](#usage)
+  - [Setting up the client](#setting-up-the-client)
+  - [Promise API](#promise-api)
+  - [Streaming API](#streaming-api)
+    - [Stream Error Handling](#stream-error-handling)
+  - [Errors](#errors)
+- [How it works](#how-it-works)
+- [TODO](#todo)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 ## Install
 
@@ -70,7 +86,7 @@ cache.get('key')
 
 * `key`: **String** the key to set
 * `value`: **Mixed** Buffer or any JSON compatible value.
-* `opts.ttl`: **Number**, `Infinity` how long the data needs to be stored measured in `seconds`
+* `opts.ttl`: **Number**, `Infinity` Time to live: how long the data needs to be stored measured in `seconds`
 
 ```javascript
 cache.set('foo', 'bar', { ttl: 60 * 60 })
@@ -181,6 +197,30 @@ cache.CloudCacheError === CloudCacheError // true
 cache.KeyNotExistsError === KeyNotExistsError // true
 KeyNotExistsError instanceof CloudCacheError // true
 ```
+
+## How it works
+
+Cloud-cache encodes each cached value as a file stored on a storage
+provider (S3, file system, etc.). The files start with a small JSON
+header which contains metadata (e.g. `creation time, ttl, data type,
+etc.`), followed by a newline character (`\n`)  and finally, the actual
+cached value. Values are encoded as JSON, except for buffers or streams
+which are stored as raw bytes.
+
+This means that cached values aren't very useful to applications which
+are unaware of the header.
+
+If you are caching transformed images to S3 for example, you couldn't
+reference the S3 URL directly from an HTML image tag for example
+(because the browser wouldn't know it needs to ignore everything before
+the first newline character).
+
+You could however serve the images from a Node.js HTTP server and use
+the stream API to stream the image to an HTTP response object (e.g.
+`cache.gets('olalonde/avatar.png').pipe(res)`).
+
+Cloud-cache evicts expired values on read which means that expired
+values will remain stored as long as they are not read.
 
 ## TODO
 
