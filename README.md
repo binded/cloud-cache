@@ -7,6 +7,23 @@ Node.js caching library with pluggable backing store via
 [Streaming support](#streaming-api) makes it particularly useful for
 caching larger values like resized/cropped images or transcoded videos.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Features](#features)
+- [Install](#install)
+- [Usage](#usage)
+  - [Setting up the client](#setting-up-the-client)
+  - [Promise API](#promise-api)
+  - [Streaming API](#streaming-api)
+    - [Stream Error Handling](#stream-error-handling)
+  - [Errors](#errors)
+- [How it works](#how-it-works)
+- [TODO](#todo)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Features
 
 - [Promise](#promise-api) and [Stream](#stream-api) based APIs
@@ -27,23 +44,6 @@ caching larger values like resized/cropped images or transcoded videos.
     - Boolean
     - Array
     - Object
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
-
-- [Install](#install)
-- [Usage](#usage)
-  - [Setting up the client](#setting-up-the-client)
-  - [Promise API](#promise-api)
-  - [Streaming API](#streaming-api)
-    - [Stream Error Handling](#stream-error-handling)
-  - [Errors](#errors)
-- [How it works](#how-it-works)
-- [TODO](#todo)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 
 ## Install
 
