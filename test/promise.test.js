@@ -86,3 +86,19 @@ test('ttl works', (t) => {
     })
   }, 300)
 })
+
+test('cache.getOrSet (refresh works)', (t) => {
+  const getLeet = () => new Promise((resolve) => {
+    setTimeout(() => resolve(1337), 100)
+  })
+  const getEleet = () => new Promise((resolve) => {
+    setTimeout(() => resolve(31337), 100)
+  })
+  return cache.getOrSet('refresh', getLeet).then((val) => {
+    t.equal(val, 1337)
+    return cache.getOrSet('refresh', getEleet, { refresh: true }).then((val2) => {
+      t.equal(val2, 31337)
+    })
+  })
+})
+

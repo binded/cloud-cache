@@ -20,7 +20,12 @@
     "type": "git",
     "url": "git+https://github.com/blockai/cloud-cache.git"
   },
-  "keywords": ["cache", "caching", "s3", "abstract-blob-store"],
+  "keywords": [
+    "cache",
+    "caching",
+    "s3",
+    "abstract-blob-store"
+  ],
   "author": "Oli Lalonde <olalonde@gmail.com> (https://syskall.com)",
   "license": "MIT",
   "bugs": {
@@ -40,6 +45,7 @@
     "cz-conventional-changelog": "^1.2.0",
     "eslint-config-blockai": "^1.0.1",
     "fs-blob-store": "^5.2.1",
+    "mem": "^0.1.1",
     "nodemon": "^1.10.2",
     "randomstring": "^1.1.5",
     "request": "^2.74.0",

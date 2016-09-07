@@ -95,13 +95,20 @@ export default (store, {
       .catch(reject)
   })
 
-  const getOrSet = (key, fn, opts) => get(key)
-    .catch((err) => {
-      if (!(err instanceof KeyNotExistsError)) throw err
-      // evaluate function as promise
-      return Promise.resolve().then(() => fn())
-        .then((value) => set(key, value, opts).then(() => value))
-    })
+  const getOrSet = (key, fn, opts = {}) => {
+    const doCacheMiss = () => Promise.resolve()
+      .then(() => fn())
+      .then((value) => set(key, value, opts).then(() => value))
+
+    if (opts.refresh) return doCacheMiss()
+
+    return get(key)
+      .catch((err) => {
+        if (!(err instanceof KeyNotExistsError)) throw err
+        // evaluate function as promise
+        return doCacheMiss()
+      })
+  }
 
   // Streaming API
   const getStream = (key) => {
@@ -133,7 +140,12 @@ export default (store, {
     const onError = (err) => {
       proxy.destroy(err)
     }
-    get(key, { stream: true })
+
+    const getKey = opts.refresh
+      ? () => Promise.reject(new KeyNotExistsError(key))
+      : () => get(key, { stream: true })
+
+    getKey()
       .then((rs) => {
         proxy.setReadable(rs)
       })
