@@ -216,7 +216,7 @@ reference the S3 URL directly from an HTML image tag for example
 the first newline character).
 
 You could however serve the images from a Node.js HTTP server and use
-the stream API to stream the image to an HTTP response object (e.g.
+the stream API to stream the image from S3 (e.g.
 `cache.gets('olalonde/avatar.png').pipe(res)`).
 
 Cloud-cache evicts expired values on read which means that expired
