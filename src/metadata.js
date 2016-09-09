@@ -42,16 +42,10 @@ export const readMetadata = (readStream) => new Promise((resolve, reject) => {
 })
 
 // Write metadata to stream
-export const writeMetadata = (metadata, writeStream) => new Promise((resolve, reject) => {
-  let metadataStr
-  try {
-    metadataStr = JSON.stringify(metadata)
-  } catch (err) {
-    return reject(err)
-  }
+export const writeMetadata = (metadata, writeStream) => {
+  const metadataStr = JSON.stringify(metadata)
   writeStream.write(`${metadataStr}\n`, 'utf8')
-  resolve()
-})
+}
 
 export const readValue = (readStream, type) => new Promise((resolve, reject) => {
   readStream.pipe(concat((buf) => {
@@ -65,12 +59,7 @@ export const readValue = (readStream, type) => new Promise((resolve, reject) => 
   }))
 })
 
-export const writeValue = (writeStream, value) => new Promise((resolve, reject) => {
-  try {
-    writeStream.end(getType(value).encode(value))
-    resolve()
-  } catch (err) {
-    reject(err)
-  }
-})
+export const writeValue = (writeStream, value) => (
+  writeStream.end(getType(value).encode(value))
+)
 

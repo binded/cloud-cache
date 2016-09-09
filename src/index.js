@@ -5,6 +5,7 @@ import { PassThrough } from 'stream'
 import { getType } from './types'
 import { readMetadata, writeMetadata, readValue, writeValue } from './metadata'
 import * as errors from './errors'
+import createWriteStream from './store/create-write-stream'
 
 const { KeyNotExistsError, CloudCacheError } = errors
 
@@ -84,16 +85,19 @@ export default (store, {
       resolve()
     }
 
-    const writeStream = store.createWriteStream(fullKey(key), cb)
+    // wrapper around store.createWriteStream that makes callback optional
+    const writeStream = createWriteStream(store, fullKey(key), cb)
 
-    writeMetadata(metadata, writeStream)
-      .then(() => {
-        if (stream) {
-          return resolve(writeStream)
-        }
-        return writeValue(writeStream, value)
-      })
-      .catch(reject)
+    try {
+      writeMetadata(metadata, writeStream)
+      if (stream) {
+        resolve(writeStream)
+      } else {
+        writeValue(writeStream, value)
+      }
+    } catch (err) {
+      reject(err)
+    }
   })
 
   const getOrSet = (key, fn, opts = {}) => {
