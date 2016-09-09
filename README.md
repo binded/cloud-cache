@@ -156,10 +156,12 @@ resizeImage('/tmp/avatar.png').pipe(cache.setStream('olalonde/avatar.png'))
 
 Returns a Readable Stream.
 
-*Important*: the stream returned by `getStreamFn` will not be cached
-unless the Readable Stream returned by `cache.getOrSetStream` is fully
-consumed. This can be done by piping or attaching an `.on('data', fn)`
-event handler.
+Important:
+
+- The stream returned by `getStreamFn` might not be cached if the
+    returned read stream is not fully consumed (e.g. by piping it).
+- A `finish` event is fired to indicate that the stream was completely
+    saved to the cache.
 
 ```javascript
 cache.getOrSetStream('olalonde/avatar.png', () => resizeImage('/tmp/avatar.png')).pipe(req)

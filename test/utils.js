@@ -60,6 +60,10 @@ const storeInit = {
         .then(() => (
           client.deleteBucket(params).promise()
         ))
+        .catch((err) => {
+          if (err.code === 'NoSuchBucket') return
+          throw err
+        })
         .then(() => (
           client.createBucket(params).promise()
         ))

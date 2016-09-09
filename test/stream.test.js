@@ -46,19 +46,21 @@ test('cache.getOrSets', (t) => {
 
   const check = (buf) => {
     t.equal(buf.toString(), poem.buf.toString())
-    t.equal(callCount, 1)
+    t.equal(callCount, 1, 'getPoemStream only called once')
   }
 
   cache
     .getOrSets('poem-get-or-sets', getPoemStream)
-    .pipe(concat((str) => {
-      check(str)
+    .on('finish', () => {
       cache
         .getOrSets('poem-get-or-sets', getPoemStream)
         .pipe(concat((str2) => {
           check(str2)
           t.end()
         }))
+    })
+    .pipe(concat((str) => {
+      check(str)
     }))
 })
 
@@ -98,21 +100,21 @@ test('cache.getOrSets, refresh=true', (t) => {
   const refresh = () => {
     cache.getOrSets('refresh', image.rs, { refresh: true })
       .on('error', t.fail)
-      .pipe(concat((buf) => {
-        check(image, buf)
-      }))
       .on('finish', () => {
         cache.gets('refresh').pipe(concat((buf2) => {
           check(image, buf2)
           t.end()
         }))
       })
+      .pipe(concat((buf) => {
+        check(image, buf)
+      }))
   }
 
   cache.getOrSets('refresh', poem.rs)
     .on('error', t.fail)
     .on('data', () => {}) // make sure poem.rs is consumed
-    .on('end', () => {
+    .on('finish', () => {
       cache.gets('refresh').pipe(concat((buf) => {
         check(poem, buf)
         refresh()

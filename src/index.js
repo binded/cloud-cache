@@ -149,15 +149,19 @@ export default (store, {
     getKey()
       .then((rs) => {
         proxy.setReadable(rs)
+        // since already cached, we can fire 'finish' event
+        proxy.emit('finish')
       })
       .catch((err) => {
         if (err instanceof KeyNotExistsError) {
           Promise.resolve().then(() => getStreamFn()).then((rs) => {
             const ws = setStream(key, opts)
             const through = new PassThrough()
+            // will fire the 'finish' event when done saving to cache
+            proxy.setWritable(ws)
             proxy.setReadable(through)
-            rs.pipe(through)
             rs.pipe(ws)
+            rs.pipe(through)
           })
           return
         }
