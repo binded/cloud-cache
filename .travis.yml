@@ -7,6 +7,7 @@ notifications:
 node_js:
   - 6
 before_script:
+  - mkdir -p test/.minio
   - docker-compose up -d
 env:
   global:
