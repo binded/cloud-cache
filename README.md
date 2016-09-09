@@ -7,6 +7,8 @@ Node.js caching library with pluggable backing store via
 [Streaming support](#stream-api) makes it particularly useful for
 caching larger values like resized/cropped images or transcoded videos.
 
+[![blob-store-compatible](https://raw.githubusercontent.com/maxogden/abstract-blob-store/master/badge.png)](https://github.com/maxogden/abstract-blob-store)
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
