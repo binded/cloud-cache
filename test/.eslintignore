@@ -1,2 +1,2 @@
-.tmp
-.minio
+/test/.tmp/**
+/test/.minio/**
