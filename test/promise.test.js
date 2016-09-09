@@ -13,16 +13,16 @@ test('cache.get', (t) => (
   })
 ))
 
-test('cache.del', (t) => {
-  t.plan(3)
+test('cache.del', (t) => (
   cache.del('somekey').then(() => (
-    cache.get('somekey').catch((err) => {
-      t.ok(err instanceof cache.KeyNotExistsError)
-      t.ok(err instanceof cache.CloudCacheError)
-      t.equal(err.key, 'somekey')
-    })
+    cache.get('somekey')
+      .catch((err) => {
+        t.ok(err instanceof cache.KeyNotExistsError)
+        t.ok(err instanceof cache.CloudCacheError)
+        t.equal(err.key, 'somekey')
+      })
   ))
-})
+))
 
 test('cache.getOrSet', (t) => {
   let callCount = 0

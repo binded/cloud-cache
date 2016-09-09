@@ -30,6 +30,7 @@ build/Release
 # Temporary / data folders
 .tmp
 data/
+.minio
 
 # Source directory
 src/

@@ -20,9 +20,11 @@ const image = file('large.jpg')
 // const devnull = () => fs.createWriteStream('/dev/null')
 
 test('cache.sets', (t) => {
-  poem.rs().pipe(cache.sets('poem')).on('finish', () => {
-    t.end()
-  })
+  poem.rs().pipe(cache.sets('poem'))
+    .on('error', t.fail)
+    .on('finish', () => {
+      t.end()
+    })
 })
 
 test('cache.gets', (t) => {

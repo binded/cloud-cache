@@ -34,6 +34,7 @@ node_modules
 # Temporary / data folders
 .tmp
 data/
+.minio
 
 # Build directory
 lib/

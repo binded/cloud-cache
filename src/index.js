@@ -79,11 +79,12 @@ export default (store, {
       ttl: ttl * 1000, // convert to milliseconds
       createdAt: Date.now(),
     }
-    const writeStream = store.createWriteStream(fullKey(key), (err) => {
-      if (stream) return
+    const cb = stream ? null : (err) => {
       if (err) return reject(err)
       resolve()
-    })
+    }
+
+    const writeStream = store.createWriteStream(fullKey(key), cb)
 
     writeMetadata(metadata, writeStream)
       .then(() => {
