@@ -161,7 +161,7 @@ Returns a Readable Stream.
 Important:
 
 - The stream returned by `getStreamFn` might not be cached if the
-    returned read stream is not fully consumed (e.g. by piping it).
+    stream returned by `cache.getOrSetStream` not fully consumed (e.g. by piping it).
 - A `finish` event is fired to indicate that the stream was completely
     saved to the cache.
 
