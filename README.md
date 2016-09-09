@@ -224,6 +224,13 @@ the stream API to stream the image from S3 (e.g.
 Cloud-cache evicts expired values on read which means that expired
 values will remain stored as long as they are not read.
 
-## TODO
+## Partial Writes
 
-- Detect/correct partial writes?
+Cloud-cache does not guarantee that **set** operations will be atomic
+and instead delegates that responsibility to the underlying store
+implementation. If the underlying store doesn't guarantee atomic writes,
+partial writes can happen (e.g. if the process crashes in the middle of
+a write). For example, `fs-blob-store` will
+[happily](https://github.com/mafintosh/fs-blob-store/pull/6) write half
+of a stream to the file system. `s3-blob-store`, on the other hand, will
+only write a stream which has been fully consumed.

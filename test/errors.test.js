@@ -12,14 +12,15 @@ class BrokenReadStream extends Readable {
     super()
     this._readCounter = 0
   }
-  _read(size) {
+  _read() {
     this._readCounter++
+    const i = this._readCounter
     process.nextTick(() => {
-      if (this._readCounter === 3) {
+      if (i === 3) {
         this.emit('error', new Error('simulated error'))
         return
       }
-      this.push(Buffer.alloc(size, `${this._readCounter}`, 'ascii'))
+      this.push(Buffer.from(`test ${i}`))
     })
   }
 }
@@ -33,8 +34,16 @@ test('cache.sets, reader emits error', (t) => {
       t.end()
     })
     .pipe(cache.sets('broken-read-stream'))
-    .on('close', t.fail)
     .on('finish', t.fail)
-    .on('error', t.fail)
 })
 
+// ONLY SUPPORTED IF STORE SUPPORTS ATOMICITY
+if (['s3'].includes(process.env.STORE || 'fs')) {
+  test('cache.gets, previous value was not cached', (t) => (
+    cache.get('broken-read-stream')
+      .then(() => t.fail())
+      .catch((err) => {
+        t.equal(err.name, 'KeyNotExistsError')
+      })
+  ))
+}
