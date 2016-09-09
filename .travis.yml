@@ -7,7 +7,7 @@ notifications:
 node_js:
   - 6
 before_script:
-  - docker-compose up
+  - docker-compose up -d
 env:
   global:
     - S3_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
