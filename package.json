@@ -38,9 +38,7 @@
   "devDependencies": {
     "aws-sdk": "^2.5.6",
     "babel-cli": "^6.14.0",
-    "babel-plugin-syntax-object-rest-spread": "^6.13.0",
-    "babel-plugin-transform-object-rest-spread": "^6.8.0",
-    "babel-preset-es2015-node6": "^0.3.0",
+    "babel-preset-blockai": "^1.0.0",
     "babel-tape-runner": "^2.0.1",
     "blue-tape": "^0.2.0",
     "cz-conventional-changelog": "^1.2.0",
